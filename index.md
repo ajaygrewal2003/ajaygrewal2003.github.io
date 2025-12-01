@@ -1,5 +1,5 @@
 # Ajay Singh Grewal
-### Machine Learning • Artificial Intelligence • Software Developer
+### Machine Learning • Artificial Intelligence • Software Engineer
 
 Welcome to my personal site. I am currently studying machine learning, AI, and building useful software. I will be sharing my research notes, learning progress, and projects as I continue developing in this field. This page will grow as I move through my AI learning roadmap.
 
