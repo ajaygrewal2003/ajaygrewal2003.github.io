@@ -6,7 +6,10 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 ---
 
 # 📚 Research
-This section will include my AI and ML research work as I complete it.  
+
+## December 1, 2025 
+Initial setup of this section. Research notes and experiments will begin being added here soon.
+
 Topics will include:
 
 - Machine learning fundamentals  
@@ -21,11 +24,14 @@ More research will be added soon.
 
 # 🛠 Projects
 
-## Meal Maker
+## December 1, 2025  
+First project entry added.
+
+**Meal Maker**  
 AI powered cooking app that generates recipes from user provided ingredients, estimates nutrition, and supports chat based recipe creation.
 
 **Website:** https://www.mealmaker.ca  
-More AI based projects will be added here as I build them.
+More AI based projects will be added here as I build them. Some that are built or in progress cannot yet be posted here due to confidential reasons. Will try posting whatever I can. 
 
 ---
 
