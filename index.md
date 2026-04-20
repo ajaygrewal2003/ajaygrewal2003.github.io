@@ -12,12 +12,12 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 ### Research
 - [April 2026 — Engineering Agentic AI Systems](#research-april-2026)
 - [March 2026 — Real-Time Voice AI Systems](#research-march-2026)
-- [December 1, 2025](#research-december-2025)
+- [December 21, 2025 — AI-Powered Cooking Systems](#research-december-2025)
 
 ### Projects
 - [April 2026 — Proxi](#project-april-2026)
 - [March 2026 — AI Phone Agent Platform](#project-march-2026)
-- [December 1, 2025 — Meal Maker](#project-december-2025)
+- [December 21, 2025 — Meal Maker](#project-december-2025)
 
 ### Other
 - [Useful Resources](#-useful-resources)
@@ -302,18 +302,94 @@ Building this platform produced several concrete findings relevant to production
 
 <a id="research-december-2025"></a>
 
-## December 1, 2025 
-Initial setup of this section. Research notes and experiments will begin being added here soon.
+## December 21, 2025 — AI-Powered Cooking Systems: A Research Report on Building Meal Maker
 
-Topics will include:
+### Introduction
 
-- Machine learning fundamentals  
-- Deep learning experiments  
-- Transformer and LLM research  
-- Applied AI notes  
-- Model evaluations and findings  
+This research report documents the AI systems, prompt engineering decisions, and applied machine learning problems encountered during the development of Meal Maker — a full-stack AI-powered cooking application for iOS and Android. Meal Maker is not a recipe search engine or a cookbook wrapper. It is a live multi-modal AI system where users have real-time voice conversations with a personalized AI chef, generate structured recipe outputs from natural language prompts, receive intelligently computed nutrition plans from biometric profiles, log food through free-text descriptions that are parsed into macro breakdowns by an LLM, and have their grocery carts populated automatically via the Instacart API. The platform is commercially deployed at mealmaker.ca.
 
-More research will be added soon.
+The core research challenge was: how do you build a food AI system that is simultaneously expressive, structured, private, personalized, and cost-efficient — across both text chat and a live voice cooking interface? Achieving this required deep work in several areas: LLM persona engineering and structured output enforcement, privacy-safe multi-pass context injection, real-time voice pipeline design, natural language nutritional parsing with transparent uncertainty reporting, and AI resource management through freemium gating.
+
+---
+
+### 1. Personalized AI Chef Persona Engineering
+
+The first and most user-facing AI challenge was building a chef that did not feel generic. A vanilla GPT chatbot answering food questions is not a compelling product. The design goal was an AI chef that behaves completely differently depending on who it is — with personality, cultural cooking style, and individual quirks infused into every response.
+
+Meal Maker solves this through a fully parametric chef persona system. When a user creates a chef, they configure three independent axes:
+
+- **Trait** — personality dimensions including Adventurous, Cheerful, Creative, Dramatic, Funny, Mischievous, Smart, and others
+- **Ethnicity** — over 40 distinct cultural cooking heritages including Indian, Italian, Japanese, Lebanese, Punjabi, Mexican, Nigerian, Greek, and more
+- **Quirk** — behavioral overlays such as "Give trivia facts", "Integrate music lyrics into the recipes", "Make Poetry", "Make Puns", "Is a Philosopher", and others
+
+These three parameters are injected directly into the GPT-4o-mini system prompt at inference time as a single, densely composed sentence that constrains the model's tone, cultural framing, and stylistic output simultaneously.
+
+The key research finding: placing all three persona axes into a single dense instruction sentence produces significantly more consistent persona adherence than splitting them across separate system messages. When separate, the model tends to satisfy the most recently stated instruction and under-apply the others.
+
+---
+
+### 2. Structured JSON Output Enforcement in LLMs
+
+A core engineering problem in LLM-based recipe generation is output reliability. When the model returns free-form text, the frontend cannot programmatically extract ingredients, instructions, or macros to render a structured recipe card. Naive prompting for JSON is insufficient — models frequently add explanatory prose, include JavaScript-style comments (which break JSON parsing), or vary the schema unexpectedly.
+
+Meal Maker enforces structured output through a tightly specified system prompt defining the exact schema the model must return when a recipe is requested. The backend handles parse-and-branch logic: if the model returns valid JSON with a `recipeCard` key, a structured recipe object is returned; if JSON parsing fails, raw text is returned as a graceful fallback.
+
+The research finding: models like GPT-4o-mini follow JSON schema constraints far more reliably when the example in the system prompt contains realistic placeholder values rather than abstract descriptions. Concrete values serve as a formatting anchor — the model mimics the format of the example, not just its described structure.
+
+---
+
+### 3. The Dual-Token Nutrition Context Handshake — Privacy-Safe Personalization
+
+One of the architecturally most interesting problems was nutrition-personalized AI responses. Injecting all user nutrition data into every chef conversation is wasteful (it costs tokens on every request, even when irrelevant) and raises a genuine privacy concern.
+
+Meal Maker solves this with a dual-token handshake protocol:
+
+1. A `NUTRITION_PROTOCOL` is injected as a secondary system message instructing the model: if the user's question warrants personalized macro guidance, respond **only** with `<REQUEST_PLAN_CONTEXT/>`; if it concerns today's food progress, respond **only** with `<REQUEST_TODAY_MEALS_CONTEXT/>`; otherwise proceed normally.
+2. The server inspects the first LLM response for these tokens. If neither is present, the response returns directly — one LLM call, no private data ever leaves the database.
+3. If a token appears, the server fetches only the specifically requested data and makes a second LLM call with that context appended.
+
+The research finding: using the LLM as a relevance gating function before loading sensitive context is more accurate than hardcoded keyword matching. This pattern generalizes to any application with user-private data.
+
+---
+
+### 4. Voice AI Pipeline — STT, Streaming Generation, and Neural TTS
+
+CookAlong Live is a voice-first cooking mode that lets users receive step-by-step cooking guidance hands-free. Building this required designing a full voice pipeline across four layers.
+
+**Speech-to-Text:** The `speech_to_text` Flutter package captures voice on-device. A continuous noise meter monitors ambient sound. STT activation uses a baseline noise differential and a pause detection timer. STT is completely paused during AI audio playback to prevent the AI from hearing its own voice.
+
+**Streaming Text Generation:** Voice queries are sent to the backend where GPT-4o-mini generates with `stream: true`, constrained to a maximum of 40 words — brief enough to sound natural during cooking.
+
+**Neural TTS:** After full text accumulation, OpenAI's `gpt-4o-mini-tts` synthesizes speech with a personality instruction embedded in the request. Audio is streamed back and played via `audioplayers`, with duration measured on-device for usage accounting.
+
+**Voice Persona Architecture:** 11 TTS voices are each mapped to a named chef character with a distinct narrative archetype (The Knight, The General, The Bard, The Philosopher, The Jester, The Rebel, and more). The research observation: providing a narrative archetype as the voice style instruction — rather than a simple tone adjective — produces meaningfully more distinctive and consistent voice performances.
+
+---
+
+### 5. AI-Driven Nutrition Plan Generation
+
+The Smart Calories Tracker uses GPT-4o-mini to generate personalized daily macro and calorie targets from a 9-point biometric profile: sex, age, activity level, sleep hours, stress level, weight, height, and a free-text goals field.
+
+Nutrition plan generation runs at temperature **0.45** — substantially lower than the 0.7 used for conversational chef responses. This reflects a core prompt engineering principle: tasks requiring numerical precision should operate at lower temperatures to reduce variance, while creative expressive tasks benefit from higher temperatures. The optimal temperature is task-specific, not application-wide.
+
+---
+
+### 6. Natural Language Food Logging with Transparent Assumption Reporting
+
+The meal logging system allows users to describe what they ate in plain English and have the AI parse this into structured macro data. The design priority was not only accuracy but **transparency** — the AI is instructed to produce an `assumptions` array surfacing every default applied (portion sizes, cooking methods, oil estimates), allowing users to review and correct the AI's reasoning.
+
+A correction flow accepts plain-text user feedback, passes the prior JSON back as ground truth, and updates only the corrected items. This task uses temperature **0.2** — the lowest in the system — because nutritional parsing is a deterministic extraction task, not a creative one.
+
+---
+
+### Summary of Research Findings
+
+- **Dense single-sentence persona injection outperforms separated instructions** — combining trait, cultural style, and quirk into one instruction sentence produces more consistent adherence than separate messages
+- **Concrete JSON examples beat abstract schema descriptions** — realistic placeholder values anchor format adherence more reliably than prose descriptions
+- **LLM-as-relevance-gate outperforms keyword matching for context loading** — the dual-token handshake uses the model's own judgment to decide when private data is warranted
+- **Temperature must be task-specific** — nutritional analysis (0.2), plan generation (0.45), conversational chat (0.7) require distinct settings
+- **Narrative archetypes produce more distinctive TTS performances than tone adjectives**
+- **Transparent AI assumptions increase user trust in AI-estimated data**
 
 ---
 
@@ -480,14 +556,78 @@ Full SaaS operator dashboard: agent configuration, visual flow builder, document
 
 <a id="project-december-2025"></a>
 
-## December 1, 2025  
-First project entry added.
+## December 21, 2025
 
-**Meal Maker**  
-AI powered cooking app that generates recipes from user provided ingredients, estimates nutrition, and supports chat based recipe creation.
+**Meal Maker — AI-Powered Cooking Assistant**
 
-**Website:** https://www.mealmaker.ca  
-More AI based projects will be added here as I build them. Some that are built or in progress cannot yet be posted here due to confidential reasons. Will try posting whatever I can.
+### Introduction
+
+Meal Maker is a full-stack AI-powered cooking application for iOS and Android, commercially deployed at [mealmaker.ca](https://www.mealmaker.ca). It is not a recipe database or a standard chatbot. It is a live multi-model AI system built around a single core insight: food is deeply personal. A useful food AI cannot be generic — it needs to know your dietary restrictions, your macro targets, what you ate today, and ideally, who you want to cook with.
+
+The app combines a personalized AI chef conversation system, a full real-time voice cooking mode, AI-generated personalized nutrition planning, natural language food logging with transparent macro analysis, and one-tap Instacart grocery cart integration — all operating together as a single coherent product.
+
+The backend is a Node.js/Express server deployed on Heroku, backed by MongoDB Atlas. The frontend is a Flutter application built in Dart, running natively on iOS and Android. All AI text generation is powered by OpenAI GPT-4o-mini. Voice synthesis uses OpenAI's gpt-4o-mini-tts. User nutritional data is encrypted at rest using AES-256 via mongoose-encryption.
+
+---
+
+### What Meal Maker Can Do
+
+- Generate AI-crafted recipes in response to any natural language prompt, returned as structured recipe cards with ingredients, instructions, and macro estimates
+- Chat with a custom AI chef persona the user designs by selecting a personality trait, a cultural cooking heritage (from 40+ options), and a behavioral quirk
+- Cook hands-free with **CookAlong Live**: a real-time voice mode where a chosen AI chef speaks step-by-step cooking instructions using neural TTS, listens for voice questions mid-cook, and automatically pauses listening during playback
+- Choose from 11 distinct AI voice personalities mapped to named chef characters with narrative archetypes (The Knight, The General, The Bard, The Jester, The Philosopher, The Rebel, and more)
+- Receive a personalized daily nutrition plan generated from a biometric profile including age, sex, activity level, sleep, stress, weight, height, and free-text goals
+- Log meals through natural language descriptions and receive parsed macro breakdowns with an explicit list of every assumption the AI made, plus a correction loop
+- Send any generated recipe directly to an Instacart shopping cart with one tap
+- Support multiple named chef characters, dietary preferences (vegan, kosher, halal, gluten-free, dairy-free, and more), and freemium access with rewarded ads and Stripe subscription billing
+
+---
+
+### Technical Architecture
+
+**Personalized AI Chef System**
+The core conversation endpoint assembles a system prompt from the user's selected chef character (name, trait, ethnicity, quirk), the user's active dietary preferences fetched from MongoDB, and a rolling window of the last five conversation exchanges. GPT-4o-mini receives this context and generates responses as the configured persona. When the response contains a recipe, the model returns structured JSON — a `prerecipeText` narrative, a `recipeCard` object with typed ingredient and instruction arrays plus macro estimates, and a `postrecipeText` field.
+
+**Dual-Token Nutrition Context Handshake**
+A secondary system message instructs the model to respond with `<REQUEST_PLAN_CONTEXT/>` or `<REQUEST_TODAY_MEALS_CONTEXT/>` if the user's question warrants private nutritional data. The server inspects the first LLM response for these tokens — if neither appears, the response returns directly with one LLM call and no private data. If a token appears, only the specifically requested data is fetched and a second call is made. Private biometric data never reaches the LLM unless the model itself determined it was relevant.
+
+**CookAlong Live Voice Pipeline**
+On-device `speech_to_text` captures voice using continuous noise metering to detect speech above a calibrated silence baseline. Utterances are sent to the backend where GPT-4o-mini generates a streaming response (max 40 words). OpenAI's `gpt-4o-mini-tts` synthesizes audio with a per-voice personality instruction embedded in the synthesis request. Audio is streamed back and played via `audioplayers`, with playback duration measured on-device for usage accounting.
+
+**AI Nutrition Plan Generation**
+Accepts a 9-field biometric submission and calls GPT-4o-mini at temperature 0.45, constraining output to strict JSON with a `planText` narrative and a `macros` object with daily numeric targets.
+
+**Natural Language Food Logging**
+Parses free-text food entries into per-item and total macro breakdowns. Every response includes an `assumptions` array of 5–10 notes surfacing all applied defaults. A correction loop accepts plain-text user feedback and re-analyzes using the prior JSON as ground truth, updating only corrected items. Runs at temperature 0.2.
+
+**Instacart Grocery Integration**
+Recipe ingredient strings are parsed via regex into structured quantity/unit/item-name objects compatible with the Instacart Product API schema. The backend proxies the cart creation call, returning a `products_link_url` the app opens directly with all ingredients pre-loaded.
+
+**Usage Gating and Freemium System**
+Usage tracked server-side per user: recipe card generation count and cumulative voice interaction seconds. Free-tier users hitting their quota are shown a Google AdMob rewarded ad option or a Stripe premium upgrade path. `MealLog` and `NutritionPlan` documents are encrypted at rest using `mongoose-encryption` (AES-256 + HMAC).
+
+---
+
+### Stack
+
+| | |
+|---|---|
+| Frontend | Flutter (Dart), iOS + Android |
+| Backend runtime | Node.js, Express |
+| Database | MongoDB Atlas (mongoose) |
+| AI — text generation | OpenAI GPT-4o-mini |
+| AI — voice synthesis | OpenAI gpt-4o-mini-tts |
+| Speech-to-text | Device-native via speech_to_text |
+| Grocery integration | Instacart Product API |
+| Payments | Stripe |
+| Authentication | Firebase Auth + custom JWT |
+| Ads | Google AdMob (rewarded + banner) |
+| Database encryption | mongoose-encryption (AES-256 + HMAC) |
+| Deployment | Heroku |
+
+---
+
+**Website:** https://www.mealmaker.ca
 
 ---
 
