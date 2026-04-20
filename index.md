@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Ajay Singh Grewal
 ### Machine Learning • Artificial Intelligence • Software Engineer
 
