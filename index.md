@@ -23,11 +23,6 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 
 # 📚 Research
 
-### Featured
-
-<details open markdown="1">
-<summary><strong>April 2026 — Engineering Agentic AI Systems: A Research Report on Building Proxi</strong></summary>
-
 ## April 2026 — Engineering Agentic AI Systems: A Research Report on Building Proxi
 
 ### Introduction
@@ -168,12 +163,7 @@ Building Proxi produced several concrete findings relevant to the broader AI eng
 - **Dual-gate integration safety** — feature flags at registration time and execution time are both necessary. Relying on only one gate creates race conditions.
 - **MCP circuit breakers are essential** — external tool servers fail. Without circuit breakers, a single stalled server can block an entire agent session indefinitely.
 
-</details>
-
-### Archive
-
-<details markdown="1">
-<summary><strong>December 1, 2025 — Research Section Setup</strong></summary>
+---
 
 ## December 1, 2025 
 Initial setup of this section. Research notes and experiments will begin being added here soon.
@@ -188,16 +178,9 @@ Topics will include:
 
 More research will be added soon.
 
-</details>
-
 ---
 
 # 🛠 Projects
-
-### Featured
-
-<details open markdown="1">
-<summary><strong>April 2026 — Proxi — Full-Stack Agentic AI Framework</strong></summary>
 
 ## April 2026
 
@@ -270,12 +253,7 @@ Sub-agents implement the `SubAgent` protocol with isolated `max_turns`, `max_tok
 
 **Repository:** https://github.com/gkpodder/Proxi
 
-</details>
-
-### Archive
-
-<details markdown="1">
-<summary><strong>December 1, 2025 — Meal Maker</strong></summary>
+---
 
 ## December 1, 2025  
 First project entry added.
@@ -284,9 +262,7 @@ First project entry added.
 AI powered cooking app that generates recipes from user provided ingredients, estimates nutrition, and supports chat based recipe creation.
 
 **Website:** https://www.mealmaker.ca  
-More AI based projects will be added here as I build them. Some that are built or in progress cannot yet be posted here due to confidential reasons. Will try posting whatever I can. 
-
-</details>
+More AI based projects will be added here as I build them. Some that are built or in progress cannot yet be posted here due to confidential reasons. Will try posting whatever I can.
 
 ---
 
