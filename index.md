@@ -25,7 +25,7 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 
 ### Featured
 
-<details open>
+<details open markdown="1">
 <summary><strong>April 2026 — Engineering Agentic AI Systems: A Research Report on Building Proxi</strong></summary>
 
 ## April 2026 — Engineering Agentic AI Systems: A Research Report on Building Proxi
@@ -172,7 +172,7 @@ Building Proxi produced several concrete findings relevant to the broader AI eng
 
 ### Archive
 
-<details>
+<details markdown="1">
 <summary><strong>December 1, 2025 — Research Section Setup</strong></summary>
 
 ## December 1, 2025 
@@ -196,7 +196,7 @@ More research will be added soon.
 
 ### Featured
 
-<details open>
+<details open markdown="1">
 <summary><strong>April 2026 — Proxi — Full-Stack Agentic AI Framework</strong></summary>
 
 ## April 2026
@@ -274,7 +274,7 @@ Sub-agents implement the `SubAgent` protocol with isolated `max_turns`, `max_tok
 
 ### Archive
 
-<details>
+<details markdown="1">
 <summary><strong>December 1, 2025 — Meal Maker</strong></summary>
 
 ## December 1, 2025  
