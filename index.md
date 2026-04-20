@@ -9,8 +9,15 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 
 ## Quick Navigation
 
-- [Research](#-research)
-- [Projects](#-projects)
+### Research
+- [April 2026 — Engineering Agentic AI Systems](#april-2026--engineering-agentic-ai-systems-a-research-report-on-building-proxi)
+- [December 1, 2025](#december-1-2025)
+
+### Projects
+- [April 2026 — Proxi](#april-2026-1)
+- [December 1, 2025 — Meal Maker](#december-1-2025-1)
+
+### Other
 - [Useful Resources](#-useful-resources)
 - [Contact](#-contact)
 
