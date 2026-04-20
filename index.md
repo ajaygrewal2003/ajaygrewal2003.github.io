@@ -14,7 +14,7 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 - [December 1, 2025](#december-1-2025)
 
 ### Projects
-- [April 2026 — Proxi](#april-2026-1)
+- [April 2026 — Proxi](#april-2026)
 - [December 1, 2025 — Meal Maker](#december-1-2025-1)
 
 ### Other
