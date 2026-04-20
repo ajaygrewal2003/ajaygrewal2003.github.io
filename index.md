@@ -9,10 +9,10 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 
 ## Quick Navigation
 
-- Research
-- Projects
-- Useful Resources
-- Contact
+- [Research](#-research)
+- [Projects](#-projects)
+- [Useful Resources](#-useful-resources)
+- [Contact](#-contact)
 
 ## Latest Updates
 
