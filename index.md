@@ -30,7 +30,7 @@ Welcome to my personal site. I am currently studying machine learning, AI, and b
 
 ---
 
-# 📚 Research
+# Research
 
 <a id="research-april-2026"></a>
 ## April 2026 - Engineering Agentic AI Systems: A Research Report on Building Proxi
@@ -393,7 +393,7 @@ A correction flow accepts plain-text user feedback, passes the prior JSON back a
 
 ---
 
-# 🛠 Projects
+# Projects
 
 <a id="project-april-2026"></a>
 ## April 2026
@@ -631,7 +631,7 @@ Usage tracked server-side per user: recipe card generation count and cumulative 
 
 ---
 
-# 📖 Useful Resources
+# Useful Resources
 These are some great resources I use when doing my research and work. I have included them below along with their authors.
 
 - **Mathematics for Machine Learning**  
@@ -668,5 +668,5 @@ These are some great resources I use when doing my research and work. I have inc
 
 ---
 
-# 📫 Contact
+# Contact
 **LinkedIn:** https://www.linkedin.com/in/ajay-grewal/
